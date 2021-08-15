@@ -144,5 +144,8 @@
     },
     "symfony/yaml": {
         "version": "v5.3.6"
+    },
+    "workerman/workerman": {
+        "version": "v4.0.19"
     }
 }

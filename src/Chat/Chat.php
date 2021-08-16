@@ -16,14 +16,14 @@ class Chat
     private MessageParser $messageParser;
 
     /**
-     * @var \SplObjectStorage
+     * [ connection_id => ChatUser ]
+     * @var array<int, ChatUser>
      */
-    private \SplObjectStorage $users;
+    private array $users = [];
 
     public function __construct(string $socketName)
     {
         $this->initWorker($socketName);
-        $this->users = new \SplObjectStorage();
         $this->messageParser = new MessageParser();
     }
 
@@ -33,7 +33,7 @@ class Chat
 
         $this->worker->onConnect = function (TcpConnection $connection) {
             echo "New connection $connection->id \n";
-            $this->users->attach(new ChatUser($connection->id, 'New user'));
+            $this->users[$connection->id] = new ChatUser($connection->id, 'New user');
         };
 
         $this->worker->onMessage = function (TcpConnection $connection, $data) {
@@ -58,7 +58,7 @@ class Chat
         $this->worker->onClose = function (TcpConnection $connection) {
             echo "Connection $connection->id closed\n";
 
-            $this->users->detach($this->getUserById($connection->id));
+            unset($this->users[$connection->id]);
         };
     }
 
@@ -85,13 +85,7 @@ class Chat
 
     private function getUserById(int $id): ?ChatUser
     {
-        /* @var ChatUser $user */
-        foreach ($this->users as $user) {
-            if ($user->getId() === $id) {
-                return $user;
-            }
-        }
-        return null;
+        return $this->users[$id] ?? null;
     }
 
     public function start(): void

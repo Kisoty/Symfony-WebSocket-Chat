@@ -7,6 +7,7 @@ namespace Kisoty\WebSocketChat\Chat;
 
 use Kisoty\WebSocketChat\Chat\MessageHandlers\MessageHandlerFactory;
 use Kisoty\WebSocketChat\Chat\MessageParser\MessageParser;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
 
@@ -21,7 +22,7 @@ class Chat
      */
     private array $users = [];
 
-    public function __construct(string $socketName)
+    public function __construct(string $socketName, private ContainerInterface $container)
     {
         $this->initWorker($socketName);
         $this->messageParser = new MessageParser();
@@ -50,7 +51,7 @@ class Chat
                 }, $this->messageParser->getOutputReceivers($data));
             }
 
-            $handler = (new MessageHandlerFactory())->getHandler($method);
+            $handler = (new MessageHandlerFactory($this->container))->getHandler($method);
 
             $handler->handle($messageData, $this, $sender, $receivers);
         };

@@ -14,8 +14,8 @@ class ChangeNameDTO
          * @Assert\Length(
          *     min=2,
          *     max=10,
-         *     minMessage = "Your first name must be at least {{ limit }} characters long",
-         *     maxMessage = "Your first name cannot be longer than {{ limit }} characters"
+         *     minMessage = "Your new name must be at least {{ limit }} characters long",
+         *     maxMessage = "Your new name cannot be longer than {{ limit }} characters"
          * )
          */
         public string $newName

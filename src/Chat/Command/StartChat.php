@@ -11,9 +11,15 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class StartChat extends Command
 {
+    public function __construct(private ContainerInterface $container, string $name = null)
+    {
+        parent::__construct($name);
+    }
+
     protected static $defaultName = 'chat';
 
     protected function configure()
@@ -28,9 +34,8 @@ class StartChat extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $chat = new Chat($input->getArgument('socket'));
+        $chat = new Chat($input->getArgument('socket'), $this->container);
 
         $chat->start();
     }
-
 }

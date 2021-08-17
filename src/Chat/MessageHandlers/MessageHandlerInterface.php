@@ -14,7 +14,7 @@ interface MessageHandlerInterface
      * @param array $messageData
      * @param Chat $chat
      * @param ChatUser $sender
-     * @param array|ChatUser[] $receivers
+     * @param ChatUser[] $receivers
      */
     public function handle(array $messageData, Chat $chat, ChatUser $sender, array $receivers);
 }

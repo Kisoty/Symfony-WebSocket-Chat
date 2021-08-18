@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
 
-class StartChat extends Command
+class ChatCommand extends Command
 {
     public function __construct(
         private MessageParser $messageParser,

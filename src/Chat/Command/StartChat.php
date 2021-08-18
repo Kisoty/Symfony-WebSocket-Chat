@@ -7,8 +7,6 @@ namespace Kisoty\WebSocketChat\Chat\Command;
 use Kisoty\WebSocketChat\Chat\Chat;
 use Kisoty\WebSocketChat\Chat\MessageHandlers\MessageHandlerFactory;
 use Kisoty\WebSocketChat\Chat\MessageParser\MessageParser;
-use Kisoty\WebSocketChat\Chat\Receivers\AllChatUsers;
-use Kisoty\WebSocketChat\Chat\Receivers\ChatUserBatch;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

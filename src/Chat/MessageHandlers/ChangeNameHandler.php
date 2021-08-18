@@ -8,6 +8,7 @@ namespace Kisoty\WebSocketChat\Chat\MessageHandlers;
 use Kisoty\WebSocketChat\Chat\Chat;
 use Kisoty\WebSocketChat\Chat\ChatUser;
 use Kisoty\WebSocketChat\Chat\MessageDTO\ChangeNameDTO;
+use Kisoty\WebSocketChat\Chat\Receivers\ReceiverInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ChangeNameHandler implements MessageHandlerInterface
@@ -17,7 +18,7 @@ class ChangeNameHandler implements MessageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function handle(array $messageData, Chat $chat, ChatUser $sender, array $receivers)
+    public function __invoke(array $messageData, Chat $chat, ChatUser $sender, ReceiverInterface $receivers)
     {
         $messageDTO = new ChangeNameDTO($messageData['newName']);
 

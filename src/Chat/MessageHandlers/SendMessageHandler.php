@@ -8,6 +8,7 @@ namespace Kisoty\WebSocketChat\Chat\MessageHandlers;
 use Kisoty\WebSocketChat\Chat\Chat;
 use Kisoty\WebSocketChat\Chat\ChatUser;
 use Kisoty\WebSocketChat\Chat\MessageDTO\CommonMessageDTO;
+use Kisoty\WebSocketChat\Chat\Receivers\ReceiverInterface;
 
 class SendMessageHandler implements MessageHandlerInterface
 {
@@ -15,18 +16,12 @@ class SendMessageHandler implements MessageHandlerInterface
      * @param array $messageData
      * @param Chat $chat
      * @param ChatUser $sender
-     * @param array|ChatUser[] $receivers
+     * @param ReceiverInterface $receivers
      */
-    public function handle(array $messageData, Chat $chat, ChatUser $sender, array $receivers)
+    public function __invoke(array $messageData, Chat $chat, ChatUser $sender, ReceiverInterface $receivers)
     {
         $messageDTO = new CommonMessageDTO($messageData['message']);
 
-        if ($receivers === ['*']) {
-            $chat->sendToAll($sender->getName() . ': ' . $messageDTO->message);
-        } else {
-            array_map(function ($receiver) use($messageDTO, $chat, $sender) {
-                $chat->sendToUser($sender->getName() . ': ' . $messageDTO->message, $receiver);
-            }, $receivers);
-        }
+        $receivers->receiveMessage($chat, $sender->getName() . ': ' . $messageDTO->message);
     }
 }

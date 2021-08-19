@@ -1,0 +1,7 @@
+{
+  "method": "message",
+  "receivers": [1, 2, 3],
+  "data": {
+    "message": "Some test message"
+  }
+}

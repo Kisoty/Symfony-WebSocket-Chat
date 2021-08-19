@@ -11,45 +11,57 @@ use Kisoty\WebSocketChat\Chat\Receivers\ReceiverInterface;
 
 class MessageParser
 {
+    private array $messageData = [];
+
     /**
      * @throws WrongMessageFormatException
      */
-    public function getMethod(string $message): string
+    public function setMessage(string $message): void
     {
         $messageData = json_decode($message, true);
 
-        if (!isset($messageData['method'])) {
-            throw new WrongMessageFormatException('Method not specified.');
+        if ($messageData === null) {
+            throw new WrongMessageFormatException();
         }
-
-        return $messageData['method'];
+        $this->messageData = $messageData;
     }
 
     /**
-     * @return ReceiverInterface
+     * @throws WrongMessageFormatException
      */
-    public function getReceiversFromChat(string $message, Chat $chat): ReceiverInterface
+    public function getMethod(): string
     {
-        $messageData = json_decode($message, true);
+        if (!isset($this->messageData['method'])) {
+            throw new WrongMessageFormatException('Method not specified.');
+        }
 
-        if (!isset($messageData['receivers']) || empty($messageData['receivers'])) {
+        return $this->messageData['method'];
+    }
+
+    public function getReceiversFromChat(Chat $chat): ReceiverInterface
+    {
+        if (!isset($this->messageData['receivers']) || empty($this->messageData['receivers'])) {
             $receivers = new AllChatUsers();
         } else {
             $receiverUsers = [];
 
-            foreach ($messageData['receivers'] as $receiverId) {
+            foreach ($this->messageData['receivers'] as $receiverId) {
                 $receiverUsers[] = $chat->getUserById($receiverId);
             }
             $receivers = new ChatUserBatch($receiverUsers);
         }
-
         return $receivers;
     }
 
-    public function getMessageData(string $message): array
+    /**
+     * @throws WrongMessageFormatException
+     */
+    public function getMessageData(): array
     {
-        $messageData = json_decode($message, true);
+        if (!isset($this->messageData['data'])) {
+            throw new WrongMessageFormatException('Method not specified.');
+        }
 
-        return $messageData['data'] ?? [];
+        return $this->messageData['data'];
     }
 }

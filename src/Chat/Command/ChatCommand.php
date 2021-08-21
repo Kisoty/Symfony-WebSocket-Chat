@@ -57,7 +57,7 @@ class ChatCommand extends Command
                 $receivers = $this->messageParser->getReceiversFromChat($chat);
 
                 $handler = $this->factory->getHandler($method);
-                $handler($messageData, $chat, $sender, $receivers);
+                $handler($chat, $sender, $receivers, $messageData);
             } catch (WrongMessageFormatException $e) {
                 $chat->sendToUser($e->getMessage(), $sender);
             }

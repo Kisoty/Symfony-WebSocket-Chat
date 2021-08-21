@@ -18,7 +18,7 @@ class ChangeNameHandler implements MessageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function __invoke(array $messageData, Chat $chat, ChatUser $sender, ReceiverInterface $receivers)
+    public function __invoke(Chat $chat, ChatUser $sender, ReceiverInterface $receivers, array $messageData)
     {
         $messageDTO = new ChangeNameDTO($messageData['newName']);
 

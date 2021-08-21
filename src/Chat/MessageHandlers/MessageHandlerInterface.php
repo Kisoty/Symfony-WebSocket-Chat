@@ -17,5 +17,5 @@ interface MessageHandlerInterface
      * @param ChatUser $sender
      * @param ReceiverInterface $receivers
      */
-    public function __invoke(array $messageData, Chat $chat, ChatUser $sender, ReceiverInterface $receivers);
+    public function __invoke(Chat $chat, ChatUser $sender, ReceiverInterface $receivers, array $messageData);
 }

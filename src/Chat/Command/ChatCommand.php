@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Kisoty\WebSocketChat\Chat\Command;
 
 use Kisoty\WebSocketChat\Chat\Chat;
-use Kisoty\WebSocketChat\Chat\MessageHandlers\MessageHandlerFactory;
-use Kisoty\WebSocketChat\Chat\MessageParser\MessageParser;
-use Kisoty\WebSocketChat\Chat\MessageParser\WrongMessageFormatException;
+use Kisoty\WebSocketChat\Chat\RequestFoundation\RequestProcessor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,8 +16,7 @@ use Workerman\Worker;
 class ChatCommand extends Command
 {
     public function __construct(
-        private MessageParser $messageParser,
-        private MessageHandlerFactory $factory,
+        private RequestProcessor $requestProcessor,
         string $name = null
     ) {
         parent::__construct($name);
@@ -49,18 +46,7 @@ class ChatCommand extends Command
 
         $worker->onMessage = function (TcpConnection $connection, $data) use ($chat) {
             $sender = $chat->getUserById($connection->id);
-
-            try {
-                $this->messageParser->setMessage($data);
-                $method = $this->messageParser->getMethod();
-                $messageData = $this->messageParser->getMessageData();
-                $receivers = $this->messageParser->getReceiversFromChat($chat);
-
-                $handler = $this->factory->getHandler($method);
-                $handler($chat, $sender, $receivers, $messageData);
-            } catch (WrongMessageFormatException $e) {
-                $chat->sendToUser($e->getMessage(), $sender);
-            }
+            $this->requestProcessor->process($chat, $sender, $data);
         };
 
         $worker->onClose = function (TcpConnection $connection) use ($chat) {

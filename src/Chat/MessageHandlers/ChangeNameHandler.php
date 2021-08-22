@@ -2,27 +2,19 @@
 
 declare(strict_types=1);
 
-
 namespace Kisoty\WebSocketChat\Chat\MessageHandlers;
 
-use Kisoty\WebSocketChat\Chat\Chat;
 use Kisoty\WebSocketChat\Chat\ChatUser;
 use Kisoty\WebSocketChat\Chat\MessageDTO\ChangeNameDTO;
-use Kisoty\WebSocketChat\Chat\Receivers\ReceiverInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ChangeNameHandler implements MessageHandlerInterface
+class ChangeNameHandler
 {
     public function __construct(private ValidatorInterface $validator) {}
 
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(Chat $chat, ChatUser $sender, ReceiverInterface $receivers, array $messageData)
+    public function handle(ChatUser $sender, ChangeNameDTO $dto)
     {
-        $messageDTO = new ChangeNameDTO($messageData);
-
-        $errors = $this->validator->validate($messageDTO);
+        $errors = $this->validator->validate($dto);
 
         if (count($errors) > 0) {
             $errorMsg = '';
@@ -30,9 +22,9 @@ class ChangeNameHandler implements MessageHandlerInterface
                 $errorMsg .= $error->getMessage() . PHP_EOL;
             }
 
-            $chat->sendToUser($errorMsg, $sender);
+            $sender->receiveMessage($errorMsg);
         } else {
-            $sender->changeName($messageDTO->newName);
+            $sender->changeName($dto->newName);
         }
     }
 }

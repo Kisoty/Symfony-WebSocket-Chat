@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kisoty\WebSocketChat\Chat\MessageParser;
+namespace Kisoty\WebSocketChat\Chat\RequestFoundation\MessageParser;
 
 class WrongMessageFormatException extends \Exception
 {

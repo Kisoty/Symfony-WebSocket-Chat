@@ -11,11 +11,17 @@ class MessageHandlerFactory
 {
     public function __construct(private ContainerInterface $container) {}
 
-    public function getHandler(string $method): MessageHandlerInterface
+    /**
+     * @param string $method
+     * @return object
+     * @throws HandlerNotFoundException
+     */
+    public function getHandler(string $method): object
     {
         return match ($method) {
             'message' => $this->container->get(SendMessageHandler::class),
-            'changeName' => $this->container->get(ChangeNameHandler::class)
+            'changeName' => $this->container->get(ChangeNameHandler::class),
+            default => throw new HandlerNotFoundException('No handler for method "' . $method .'"')
         };
     }
 }

@@ -20,7 +20,7 @@ class Chat
 
     public function addUser(int $userId): void
     {
-        $this->users[$userId] = new ChatUser($userId, 'New user');
+        $this->users[$userId] = new ChatUser($this, $userId, 'New user');
     }
 
     public function removeUser(int $userId): void

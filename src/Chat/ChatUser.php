@@ -5,14 +5,11 @@ declare(strict_types=1);
 
 namespace Kisoty\WebSocketChat\Chat;
 
+use Kisoty\WebSocketChat\Chat\Receivers\ReceiverInterface;
 
-class ChatUser
+class ChatUser implements ReceiverInterface
 {
-    /**
-     * @param string $name
-     * @param int $id
-     */
-    public function __construct(private int $id, private string $name) {}
+    public function __construct(private Chat $chat, private int $id, private string $name) {}
 
     public function getId(): int
     {
@@ -27,5 +24,10 @@ class ChatUser
     public function changeName(string $newName): void
     {
         $this->name = $newName;
+    }
+
+    public function receiveMessage(string $message): void
+    {
+        $this->chat->sendToUser($message, $this);
     }
 }

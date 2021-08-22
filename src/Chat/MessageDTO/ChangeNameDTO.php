@@ -9,7 +9,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ChangeNameDTO implements MessageDTOInterface
 {
     /**
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(
+     *     message = "New name should not be blank"
+     * )
      * @Assert\Length(
      *     min=2,
      *     max=10,
@@ -20,6 +22,6 @@ class ChangeNameDTO implements MessageDTOInterface
     public string $newName;
 
     public function __construct(array $messageData) {
-        $this->newName = $messageData['newName'] ?? '';
+        $this->newName = (string)$messageData['newName'] ?? '';
     }
 }

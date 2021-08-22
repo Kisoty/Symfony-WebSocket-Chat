@@ -16,6 +16,6 @@ class CommonMessageDTO implements MessageDTOInterface
 
     public function __construct(array $messageData)
     {
-        $this->message = $messageData['message'] ?? '';
+        $this->message = (string)$messageData['message'] ?? '';
     }
 }

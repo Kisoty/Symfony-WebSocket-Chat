@@ -11,7 +11,8 @@ class AllChatUsers implements ReceiverInterface
 {
     public function __construct(private Chat $chat) {}
 
-    public function receiveMessage(string $message): void {
+    public function receiveMessage(string $message): void
+    {
         $this->chat->sendToAll($message);
     }
 }

@@ -20,7 +20,7 @@ class SendMessageHandler implements MessageHandlerInterface
      */
     public function __invoke(Chat $chat, ChatUser $sender, ReceiverInterface $receivers, array $messageData)
     {
-        $messageDTO = new CommonMessageDTO($messageData['message']);
+        $messageDTO = new CommonMessageDTO($messageData);
 
         $receivers->receiveMessage($chat, $sender->getName() . ': ' . $messageDTO->message);
     }

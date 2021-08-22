@@ -7,12 +7,15 @@ namespace Kisoty\WebSocketChat\Chat\MessageDTO;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CommonMessageDTO
+class CommonMessageDTO implements MessageDTOInterface
 {
-    public function __construct(
-        /**
-         * @Assert\NotBlank()
-         */
-        public string $message
-    ) {}
+    /**
+     * @Assert\NotBlank()
+     */
+    public string $message;
+
+    public function __construct(array $messageData)
+    {
+        $this->message = $messageData['message'] ?? '';
+    }
 }

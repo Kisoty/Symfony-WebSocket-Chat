@@ -20,7 +20,7 @@ class ChangeNameHandler implements MessageHandlerInterface
      */
     public function __invoke(Chat $chat, ChatUser $sender, ReceiverInterface $receivers, array $messageData)
     {
-        $messageDTO = new ChangeNameDTO($messageData['newName']);
+        $messageDTO = new ChangeNameDTO($messageData);
 
         $errors = $this->validator->validate($messageDTO);
 

@@ -41,14 +41,14 @@ class MessageParser
     public function getReceiversFromChat(Chat $chat): ReceiverInterface
     {
         if (!isset($this->messageData['receivers']) || empty($this->messageData['receivers'])) {
-            $receivers = new AllChatUsers();
+            $receivers = new AllChatUsers($chat);
         } else {
             $receiverUsers = [];
 
             foreach ($this->messageData['receivers'] as $receiverId) {
                 $receiverUsers[] = $chat->getUserById($receiverId);
             }
-            $receivers = new ChatUserBatch($receiverUsers);
+            $receivers = new ChatUserBatch($chat, $receiverUsers);
         }
         return $receivers;
     }

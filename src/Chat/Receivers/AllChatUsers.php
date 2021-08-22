@@ -9,9 +9,9 @@ use Kisoty\WebSocketChat\Chat\Chat;
 
 class AllChatUsers implements ReceiverInterface
 {
+    public function __construct(private Chat $chat) {}
 
-    public function receiveMessage(Chat $chat, string $message): void
-    {
-        $chat->sendToAll($message);
+    public function receiveMessage(string $message): void {
+        $this->chat->sendToAll($message);
     }
 }

@@ -11,16 +11,17 @@ use Kisoty\WebSocketChat\Chat\ChatUser;
 class ChatUserBatch implements ReceiverInterface
 {
     public function __construct(
+        private Chat $chat,
         /**
          * @var ChatUser[] $users
          */
         private array $users = []
     ) {}
 
-    public function receiveMessage(Chat $chat, string $message): void
+    public function receiveMessage(string $message): void
     {
         foreach ($this->users as $user) {
-            $chat->sendToUser($message, $user);
+            $this->chat->sendToUser($message, $user);
         }
     }
 }

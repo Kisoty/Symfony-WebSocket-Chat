@@ -22,6 +22,6 @@ class SendMessageHandler implements MessageHandlerInterface
     {
         $messageDTO = new CommonMessageDTO($messageData);
 
-        $receivers->receiveMessage($chat, $sender->getName() . ': ' . $messageDTO->message);
+        $receivers->receiveMessage($sender->getName() . ': ' . $messageDTO->message);
     }
 }

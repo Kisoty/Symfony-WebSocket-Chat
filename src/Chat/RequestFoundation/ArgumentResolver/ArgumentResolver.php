@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Kisoty\WebSocketChat\Chat\RequestFoundation\ArgumentResolver;
 
-use Kisoty\WebSocketChat\Chat\MessageDTO\MessageDTOInterface;
 use Kisoty\WebSocketChat\Chat\RequestFoundation\ArgumentResolver\Exception\ArgumentResolverException;
 use Kisoty\WebSocketChat\Chat\RequestFoundation\ArgumentResolver\Exception\ArgumentNotFoundException;
 use Kisoty\WebSocketChat\Chat\RequestFoundation\ArgumentResolver\Exception\WrongTypeArgumentException;

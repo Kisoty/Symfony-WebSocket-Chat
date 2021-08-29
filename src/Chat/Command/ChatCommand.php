@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Kisoty\WebSocketChat\Chat\Command;
 
-use Kisoty\WebSocketChat\Chat\Chat;
+use Kisoty\WebSocketChat\Chat\MessageDispatcher;
+use Kisoty\WebSocketChat\Chat\ChatUser;
+use Kisoty\WebSocketChat\Chat\ChatUserInMemoryStorage;
 use Kisoty\WebSocketChat\Chat\RequestFoundation\RequestProcessor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -37,21 +39,24 @@ class ChatCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $worker = new Worker($input->getArgument('socket'));
-        $chat = new Chat($worker);
+        $storage = new ChatUserInMemoryStorage();
 
-        $worker->onConnect = function (TcpConnection $connection) use ($chat) {
+        $dispatcher = new MessageDispatcher($worker);
+
+        $worker->onConnect = function (TcpConnection $connection) use ($storage, $dispatcher) {
             echo "New connection $connection->id \n";
-            $chat->addUser($connection->id);
+            $newUser = new ChatUser($dispatcher, $connection->id, 'New User');
+            $storage->add($connection->id, $newUser);
         };
 
-        $worker->onMessage = function (TcpConnection $connection, $data) use ($chat) {
-            $sender = $chat->getUserById($connection->id);
-            $this->requestProcessor->process($chat, $sender, $data);
+        $worker->onMessage = function (TcpConnection $connection, $data) use ($storage, $dispatcher) {
+            $sender = $storage->getByConnectionId($connection->id);
+            $this->requestProcessor->process($dispatcher, $sender, $data);
         };
 
-        $worker->onClose = function (TcpConnection $connection) use ($chat) {
+        $worker->onClose = function (TcpConnection $connection) use ($storage) {
             echo "Connection $connection->id closed\n";
-            $chat->removeUser($connection->id);
+            $storage->remove($connection->id);
         };
 
         Worker::runAll();

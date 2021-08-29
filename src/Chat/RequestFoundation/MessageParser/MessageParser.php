@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Kisoty\WebSocketChat\Chat\RequestFoundation\MessageParser;
 
-use Kisoty\WebSocketChat\Chat\Chat;
+use Kisoty\WebSocketChat\Chat\MessageDispatcher;
+use Kisoty\WebSocketChat\Chat\ChatUserInMemoryStorage;
 use Kisoty\WebSocketChat\Chat\Receivers\AllChatUsers;
 use Kisoty\WebSocketChat\Chat\Receivers\ChatUserBatch;
 use Kisoty\WebSocketChat\Chat\Receivers\ReceiverInterface;
@@ -12,6 +13,8 @@ use Kisoty\WebSocketChat\Chat\Receivers\ReceiverInterface;
 class MessageParser
 {
     private array $messageData = [];
+
+    public function __construct(private ChatUserInMemoryStorage $storage) {}
 
     /**
      * @throws WrongMessageFormatException
@@ -38,17 +41,17 @@ class MessageParser
         return $this->messageData['method'];
     }
 
-    public function getReceiversFromChat(Chat $chat): ReceiverInterface
+    public function getReceiversFromChat(MessageDispatcher $dispatcher): ReceiverInterface
     {
         if (!isset($this->messageData['receivers']) || empty($this->messageData['receivers'])) {
-            $receivers = new AllChatUsers($chat);
+            $receivers = new AllChatUsers($dispatcher);
         } else {
             $receiverUsers = [];
 
             foreach ($this->messageData['receivers'] as $receiverId) {
-                $receiverUsers[] = $chat->getUserById($receiverId);
+                $receiverUsers[] = $this->storage->getByConnectionId($receiverId);
             }
-            $receivers = new ChatUserBatch($chat, $receiverUsers);
+            $receivers = new ChatUserBatch($dispatcher, $receiverUsers);
         }
         return $receivers;
     }

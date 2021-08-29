@@ -9,7 +9,7 @@ use Kisoty\WebSocketChat\Chat\Receivers\ReceiverInterface;
 
 class ChatUser implements ReceiverInterface
 {
-    public function __construct(private Chat $chat, private int $id, private string $name) {}
+    public function __construct(private MessageDispatcher $dispatcher, private int $id, private string $name) {}
 
     public function getId(): int
     {
@@ -28,6 +28,6 @@ class ChatUser implements ReceiverInterface
 
     public function receiveMessage(string $message): void
     {
-        $this->chat->sendToUser($message, $this);
+        $this->dispatcher->sendToUser($message, $this);
     }
 }

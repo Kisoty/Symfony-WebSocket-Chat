@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace Kisoty\WebSocketChat\Chat\RequestFoundation;
 
-use Kisoty\WebSocketChat\Chat\Chat;
+use Kisoty\WebSocketChat\Chat\MessageDispatcher;
 use Kisoty\WebSocketChat\Chat\ChatUser;
 use Kisoty\WebSocketChat\Chat\MessageHandlers\HandlerNotFoundException;
 use Kisoty\WebSocketChat\Chat\MessageHandlers\MessageHandlerFactory;
@@ -26,28 +26,28 @@ class RequestProcessor
     ) {}
 
 
-    public function process(Chat $chat, ChatUser $sender, string $data): void
+    public function process(MessageDispatcher $dispatcher, ChatUser $sender, string $data): void
     {
         try {
             $this->messageParser->setMessage($data);
             $method = $this->messageParser->getMethod();
             $messageData = $this->messageParser->getMessageData();
-            $receivers = $this->messageParser->getReceiversFromChat($chat);
+            $receivers = $this->messageParser->getReceiversFromChat($dispatcher);
         } catch (WrongMessageFormatException $e) {
-            $chat->sendToUser($e->getMessage(), $sender);
+            $dispatcher->sendToUser($e->getMessage(), $sender);
             return;
         }
 
         try {
             $handler = $this->factory->getHandler($method);
         } catch (HandlerNotFoundException $e) {
-            $chat->sendToUser($e->getMessage(), $sender);
+            $dispatcher->sendToUser($e->getMessage(), $sender);
             return;
         }
 
         $this->argumentResolver->predefine(ChatUser::class, $sender);
         $this->argumentResolver->predefine(ReceiverInterface::class, $receivers);
-        $this->argumentResolver->predefine(Chat::class, $chat);
+        $this->argumentResolver->predefine(MessageDispatcher::class, $dispatcher);
         $this->argumentResolver->addResolver($this->dtoResolver);
 
         if (method_exists($handler, 'handle')) {
@@ -55,7 +55,7 @@ class RequestProcessor
                 $arguments = $this->argumentResolver->getArguments($handler, 'handle', $messageData);
                 $handler->handle(...$arguments);
             } catch (ArgumentResolverException $e) {
-                $chat->sendToUser($e->getMessage(), $sender);
+                $dispatcher->sendToUser($e->getMessage(), $sender);
             }
         }
     }

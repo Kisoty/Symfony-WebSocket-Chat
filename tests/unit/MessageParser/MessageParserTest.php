@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Kisoty\WebSocketChat\unit\MessageParser;
 
-use Kisoty\WebSocketChat\Chat\Chat;
-use Kisoty\WebSocketChat\Chat\MessageParser\MessageParser;
+use Kisoty\WebSocketChat\Chat\ChatUser;
+use Kisoty\WebSocketChat\Chat\ChatUserInMemoryStorage;
+use Kisoty\WebSocketChat\Chat\MessageDispatcher;
+use Kisoty\WebSocketChat\Chat\RequestFoundation\MessageParser\MessageParser;
 use Kisoty\WebSocketChat\Chat\Receivers\AllChatUsers;
 use Kisoty\WebSocketChat\Chat\Receivers\ChatUserBatch;
 
@@ -13,7 +15,9 @@ class MessageParserTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetMessageMethod(): void
     {
-        $parser = new MessageParser();
+        $userStorage = $this->createStub(ChatUserInMemoryStorage::class);
+
+        $parser = new MessageParser($userStorage);
         $message = file_get_contents(__DIR__ . '/resources/messageForThreeReceivers.json');
         $parser->setMessage($message);
 
@@ -22,7 +26,9 @@ class MessageParserTest extends \PHPUnit\Framework\TestCase
 
     public function testGetChangeNameMethod(): void
     {
-        $parser = new MessageParser();
+        $userStorage = $this->createStub(ChatUserInMemoryStorage::class);
+
+        $parser = new MessageParser($userStorage);
         $message = file_get_contents(__DIR__ . '/resources/changeName.json');
         $parser->setMessage($message);
 
@@ -31,9 +37,13 @@ class MessageParserTest extends \PHPUnit\Framework\TestCase
 
     public function testGetBatchReceiversFromChat(): void
     {
-        $parser = new MessageParser();
+        $user = $this->createStub(ChatUser::class);
+        $userStorage = $this->createStub(ChatUserInMemoryStorage::class);
+        $userStorage->method('getByConnectionId')->willReturn($user);
+
+        $parser = new MessageParser($userStorage);
         $message = file_get_contents(__DIR__ . '/resources/messageForThreeReceivers.json');
-        $chat = $this->createMock(Chat::class);
+        $chat = $this->createMock(MessageDispatcher::class);
 
         $parser->setMessage($message);
 
@@ -42,9 +52,11 @@ class MessageParserTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAllUsersReceiversFromChat(): void
     {
-        $parser = new MessageParser();
+        $userStorage = $this->createStub(ChatUserInMemoryStorage::class);
+
+        $parser = new MessageParser($userStorage);
         $message = file_get_contents(__DIR__ . '/resources/messageForAllChatUsers.json');
-        $chat = $this->createMock(Chat::class);
+        $chat = $this->createMock(MessageDispatcher::class);
 
         $parser->setMessage($message);
 
@@ -53,7 +65,9 @@ class MessageParserTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMessageDataWithMessage(): void
     {
-        $parser = new MessageParser();
+        $userStorage = $this->createStub(ChatUserInMemoryStorage::class);
+
+        $parser = new MessageParser($userStorage);
         $message = file_get_contents(__DIR__ . '/resources/messageForAllChatUsers.json');
 
         $parser->setMessage($message);
@@ -63,11 +77,12 @@ class MessageParserTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMessageDataWithNewName(): void
     {
-        $parser = new MessageParser();
+        $userStorage = $this->createStub(ChatUserInMemoryStorage::class);
+
+        $parser = new MessageParser($userStorage);
         $message = file_get_contents(__DIR__ . '/resources/changeName.json');
 
         $parser->setMessage($message);
-        var_dump($parser->getMessageData());
 
         $this->assertEquals(['newName' => 'AwesomeName'], $parser->getMessageData());
     }

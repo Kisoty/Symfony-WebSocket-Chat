@@ -9,7 +9,7 @@ use Kisoty\WebSocketChat\Chat\MessageDTO\MessageDTOInterface;
 use Kisoty\WebSocketChat\Chat\RequestFoundation\ArgumentResolver\Exception\ArgumentResolverException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class DTOResolver implements ArgumentResolverInterface
+class DTOResolver implements ArgumentValueResolverInterface
 {
     public function __construct(private ValidatorInterface $validator) {}
 

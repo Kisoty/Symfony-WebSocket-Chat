@@ -12,7 +12,7 @@ class ArgumentResolver
 {
     private array $predefined = [];
     /**
-     * @var array|ArgumentResolverInterface[]
+     * @var array|ArgumentValueResolverInterface[]
      */
     private array $resolvers = [];
 
@@ -21,7 +21,7 @@ class ArgumentResolver
         $this->predefined[$className] = $argument;
     }
 
-    public function addResolver(ArgumentResolverInterface $resolver): void
+    public function addResolver(ArgumentValueResolverInterface $resolver): void
     {
         if (!in_array($resolver, $this->resolvers)) {
             $this->resolvers[] = $resolver;

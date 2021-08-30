@@ -7,7 +7,7 @@ namespace Kisoty\WebSocketChat\Chat\RequestFoundation\ArgumentResolver;
 
 use Kisoty\WebSocketChat\Chat\RequestFoundation\ArgumentResolver\Exception\ArgumentResolverException;
 
-interface ArgumentResolverInterface
+interface ArgumentValueResolverInterface
 {
     public function supports(\ReflectionParameter $parameter): bool;
 

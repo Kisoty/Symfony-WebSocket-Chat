@@ -9,10 +9,10 @@ use Kisoty\WebSocketChat\Chat\RequestFoundation\ArgumentResolver\Exception\Argum
 
 interface ArgumentResolverInterface
 {
-    public function supports(string $argTypeName): bool;
+    public function supports(\ReflectionParameter $parameter): bool;
 
     /**
      * @throws ArgumentResolverException
      */
-    public function resolve(array $messageData, string $argTypeName): object;
+    public function resolve(array $messageData, \ReflectionParameter $parameter): object;
 }

@@ -57,7 +57,7 @@ class ArgumentResolver
                 };
             } elseif ($this->isPredefined($argTypeName)) {
                 $arguments[] = $this->predefined[$argTypeName];
-            } elseif (!is_null($argument = $this->getArgFromResolvers($messageData, $argTypeName))) {
+            } elseif (!is_null($argument = $this->getArgFromResolvers($messageData, $methodArg))) {
                 $arguments[] = $argument;
             } else {
                 throw new ArgumentNotFoundException('Argument of type '
@@ -141,11 +141,11 @@ class ArgumentResolver
     /**
      * @throws ArgumentResolverException
      */
-    private function getArgFromResolvers(array $messageData, string $argTypeName): ?object
+    private function getArgFromResolvers(array $messageData, \ReflectionParameter $parameter): ?object
     {
         foreach ($this->resolvers as $resolver) {
-            if ($resolver->supports($argTypeName)) {
-                return $resolver->resolve($messageData, $argTypeName);
+            if ($resolver->supports($parameter)) {
+                return $resolver->resolve($messageData, $parameter);
             }
         }
 

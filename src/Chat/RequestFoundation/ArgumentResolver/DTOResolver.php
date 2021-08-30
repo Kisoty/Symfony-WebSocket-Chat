@@ -13,9 +13,15 @@ class DTOResolver implements ArgumentResolverInterface
 {
     public function __construct(private ValidatorInterface $validator) {}
 
-    public function supports(string $argTypeName): bool
+    public function supports(\ReflectionParameter $parameter): bool
     {
-        $reflection = new \ReflectionClass($argTypeName);
+        $argTypeName = $parameter->getType()->getName();
+
+        try {
+            $reflection = new \ReflectionClass($argTypeName);
+        } catch (\ReflectionException) {
+            return false;
+        }
 
         if ($reflection->implementsInterface(MessageDTOInterface::class)) {
             return true;
@@ -27,8 +33,10 @@ class DTOResolver implements ArgumentResolverInterface
     /**
      * @throws ArgumentResolverException
      */
-    public function resolve(array $messageData, string $argTypeName): object
+    public function resolve(array $messageData, \ReflectionParameter $parameter): object
     {
+        $argTypeName = $parameter->getType()->getName();
+
         $dto = new $argTypeName($messageData);
 
         $errors = $this->validator->validate($dto);
